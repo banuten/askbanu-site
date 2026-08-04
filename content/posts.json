@@ -1,0 +1,11 @@
+{
+  "posts": [
+    {
+      "title": "Welcome to the blog",
+      "slug": "welcome",
+      "date": "2026-08-05",
+      "excerpt": "This is a sample post. Edit or delete it from the Content Manager at /admin, then write your first real one.",
+      "body": "This is a sample post so the blog isn't empty on first deploy.\n\nTo write a real post, go to **/admin**, log in, and edit this entry or add a new one. Each post has a title, a URL slug, a date, a short excerpt for the blog listing page, and a body written in markdown.\n\nDelete this post once you've published something real."
+    }
+  ]
+}
