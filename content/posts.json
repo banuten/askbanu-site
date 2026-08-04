@@ -3,7 +3,7 @@
     {
       "title": "Why Benchmarking AI/BI Genies Isn't Enough",
       "slug": "benchmarking-ai-bi-genies",
-      "date": "2026-08-05",
+      "date": "2026-04-10",
       "excerpt": "Benchmark scores don't build trust in production AI. A well-defined semantic layer does.",
       "body": "Everyone loves AI benchmark scores. But in the real world, an AI tool being right 85% of the time doesn't cut it.\n\nIf an executive asks for quarterly revenue, they need a 100% accurate, unambiguous answer immediately. One bad number burns trust fast.\n\n## The Problem Isn't the Model\n\nWhen tools like Databricks AI/BI Genie struggle, the reflex is to blame the LLM or tweak prompts. But raw model intelligence isn't the bottleneck.\n\nThe real fix happens before the AI generates an answer. It comes down to a well-defined semantic layer.\n\n## Data Engineering Over Model Hype\n\nAn AI agent is only as smart as the schema it sits on. A strong semantic layer gives the model hard guardrails:\n\n- Standardized business logic (defining \"churn,\" \"revenue,\" or \"margin\")\n- Clean table relationships to stop bad joins and double counting\n- Clear contextual metadata\n\n***Benchmarks have their place, but solid data engineering is what makes conversational AI trustworthy.***"
     },
