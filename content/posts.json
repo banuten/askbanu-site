@@ -1,11 +1,11 @@
 {
   "posts": [
     {
-      "title": "Welcome to the blog",
-      "slug": "welcome",
+      "title": "Why Benchmarking AI/BI Genies Isn't Enough",
+      "slug": "benchmarking-ai-bi-genies",
       "date": "2026-08-05",
-      "excerpt": "This is a sample post. Edit or delete it from the Content Manager at /admin, then write your first real one.",
-      "body": "This is a sample post so the blog isn't empty on first deploy.\n\nTo write a real post, go to **/admin**, log in, and edit this entry or add a new one. Each post has a title, a URL slug, a date, a short excerpt for the blog listing page, and a body written in markdown.\n\nDelete this post once you've published something real."
+      "excerpt": "Benchmark scores don't build trust in production AI. A well-defined semantic layer does.",
+      "body": "Everyone loves AI benchmark scores. But in the real world, an AI tool being right 85% of the time doesn't cut it.\n\n\n\nIf an executive asks for quarterly revenue, they need a 100% accurate, unambiguous answer immediately. One bad number burns trust fast.\n\n\n\n\\## The Problem Isn't the Model\n\n\n\nWhen tools like Databricks AI/BI Genie struggle, the reflex is to blame the LLM or tweak prompts. But raw model intelligence isn't the bottleneck.\n\n\n\nThe real fix happens before the AI generates an answer. It comes down to a well-defined semantic layer.\n\n\n\n\\## Data Engineering Over Model Hype\n\n\n\nAn AI agent is only as smart as the schema it sits on. A strong semantic layer gives the model hard guardrails:\n\n\n\n\\- Standardized business logic (defining \"churn,\" \"revenue,\" or \"margin\")\n\n\\- Clean table relationships to stop bad joins and double counting\n\n\\- Clear contextual metadata\n\n\n\nThe takeaway: benchmarks have their place, but solid data engineering is what makes conversational AI trustworthy."
     }
   ]
 }
