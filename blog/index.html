@@ -21,13 +21,19 @@
   .wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px 100px; }
   .back { display: inline-block; margin-bottom: 32px; font-size: 15px; font-weight: 500; color: var(--rust); text-decoration: none; }
   h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 40px; letter-spacing: -0.02em; margin-bottom: 8px; }
-  .sub { color: var(--ink-soft); margin-bottom: 48px; }
+  .sub { color: var(--ink-soft); margin-bottom: 10px; }
   .post-card { display: block; padding: 24px 0; border-bottom: 1px solid var(--line); text-decoration: none; }
   .post-card:first-child { padding-top: 0; }
   .post-date { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--olive); font-weight: 500; }
   .post-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; margin: 6px 0 8px; }
   .post-excerpt { color: var(--ink-soft); font-size: 16px; }
   .empty { color: var(--ink-soft); }
+  .ai-note { font-size: 13px; color: var(--olive); margin-bottom: 40px; }
+  .featured-tag {
+    display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    color: var(--rust); background: var(--cream-warm); border: 1px solid rgba(184,84,30,0.25);
+    border-radius: 999px; padding: 3px 10px; margin-bottom: 8px;
+  }
 </style>
 </head>
 <body>
@@ -35,6 +41,7 @@
   <a href="/" class="back">← AskBanu</a>
   <h1>Blog</h1>
   <p class="sub">Notes on applied AI, data platforms, and shipping real production systems.</p>
+  <p class="ai-note">Drafted with AI assistance. The thinking, decisions, and edits are mine.</p>
   <div id="posts"><p class="empty">Loading…</p></div>
 </div>
 
@@ -43,13 +50,19 @@
     .then(r => r.json())
     .then(data => {
       const container = document.getElementById('posts');
-      const posts = (data.posts || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+      const posts = (data.posts || []).slice().sort((a, b) => {
+        const fa = a.featured ? 1 : 0;
+        const fb = b.featured ? 1 : 0;
+        if (fa !== fb) return fb - fa;
+        return new Date(b.date) - new Date(a.date);
+      });
       if (posts.length === 0) {
         container.innerHTML = '<p class="empty">No posts yet.</p>';
         return;
       }
       container.innerHTML = posts.map(p => `
         <a class="post-card" href="/blog/post.html?slug=${encodeURIComponent(p.slug)}">
+          ${p.featured ? '<span class="featured-tag">★ Featured</span><br>' : ''}
           <div class="post-date">${new Date(p.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
           <div class="post-title">${p.title}</div>
           <p class="post-excerpt">${p.excerpt || ''}</p>
