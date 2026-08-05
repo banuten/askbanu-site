@@ -826,7 +826,7 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     </h1>
 
     <p class="hero__sub">
-      There's a lot of noise about AI these days. But if you can't explain how a system works when a real person uses it on a Tuesday morning, you don't really understand it.
+      There's a lot of noise about AI these days. But if you can't explain how a system works when a real person uses it on a Tuesday morning, you don't really understand it. I write about the practical stuff in the middle: making models, agents, and data platforms actually run, and fixing the unexpected quirks along the way.
     </p>
 
     <div class="hero__ctas">
@@ -855,6 +855,36 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
     <span>Career notes</span><span class="marquee__sep">✦</span>
   </div>
 </div>
+
+<!-- ============================================
+     FEATURED POST (populated by JS, hidden if none marked featured)
+     ============================================ -->
+<section class="section" id="featured-post-section" style="display:none;">
+  <div class="container">
+    <div class="eyebrow">From the blog</div>
+    <a id="featured-post-card" href="/blog/" style="display:block; background: var(--yellow-soft); border-radius: 20px; padding: 32px 28px; text-decoration: none; color: inherit; transition: transform 0.15s ease;">
+      <span style="display:inline-block; font-size:12px; font-weight:600; letter-spacing:0.04em; color: var(--rust); background: var(--cream); border: 1px solid rgba(184,84,30,0.25); border-radius: 999px; padding: 3px 10px; margin-bottom: 12px;">★ Featured</span>
+      <h3 id="featured-post-title" style="font-family:'Fraunces',serif; font-size: 26px; font-weight: 600; margin-bottom: 8px;"></h3>
+      <p id="featured-post-excerpt" style="color: var(--ink-soft); font-size: 16px;"></p>
+    </a>
+  </div>
+</section>
+
+<script>
+  fetch('/content/posts.json')
+    .then(r => r.json())
+    .then(data => {
+      const posts = (data.posts || []).filter(p => p.featured);
+      if (posts.length === 0) return;
+      posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+      const p = posts[0];
+      document.getElementById('featured-post-title').textContent = p.title;
+      document.getElementById('featured-post-excerpt').textContent = p.excerpt || '';
+      document.getElementById('featured-post-card').href = '/blog/post.html?slug=' + encodeURIComponent(p.slug);
+      document.getElementById('featured-post-section').style.display = 'block';
+    })
+    .catch(() => {});
+</script>
 
 <!-- ============================================
      SERVICES
