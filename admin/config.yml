@@ -21,5 +21,6 @@ collections:
               - { label: "Title", name: "title", widget: "string" }
               - { label: "Slug (used in the URL, lowercase-with-dashes, no spaces)", name: "slug", widget: "string" }
               - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+              - { label: "Featured (shows at the top of the blog and on the homepage)", name: "featured", widget: "boolean", default: false }
               - { label: "Excerpt (shows on the blog list page)", name: "excerpt", widget: "text" }
               - { label: "Body", name: "body", widget: "markdown" }
