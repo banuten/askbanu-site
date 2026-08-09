@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Stats — AskBanu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1f1a0e; --ink-soft: #3a3322; --cream: #fffbeb; --cream-warm: #fef5c7;
+    --yellow: #fbd724; --olive: #6b6330; --rust: #b8541e; --line: rgba(31,26,14,0.12);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Instrument Sans', sans-serif; background: var(--cream); color: var(--ink); line-height: 1.5; }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 40px 24px 100px; }
+  h1 { font-family: 'Fraunces', serif; font-weight: 600; font-size: 32px; margin-bottom: 4px; }
+  .sub { color: var(--ink-soft); margin-bottom: 32px; }
+  .locked { text-align: center; padding: 80px 20px; }
+  .locked p { color: var(--ink-soft); margin-bottom: 20px; }
+  button {
+    font-family: 'Instrument Sans', sans-serif; font-weight: 500; font-size: 15px;
+    background: var(--ink); color: var(--cream); border: none; border-radius: 999px;
+    padding: 12px 24px; cursor: pointer;
+  }
+  .gc-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--cream-warm); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 18px; text-decoration: none; color: var(--ink); font-weight: 500;
+    margin-bottom: 32px;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); font-size: 15px; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--olive); }
+  .featured-tag { font-size: 11px; color: var(--rust); font-weight: 600; }
+  .likes { font-weight: 600; }
+  .empty { color: var(--ink-soft); padding: 20px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="locked" class="locked">
+    <h1>Stats</h1>
+    <p>This page is private. Log in to view it.</p>
+    <button onclick="netlifyIdentity.open('login')">Log in</button>
+  </div>
+
+  <div id="dashboard" style="display:none;">
+    <h1>Stats</h1>
+    <p class="sub">Like counts per post. Visit numbers live on GoatCounter.</p>
+    <a class="gc-link" href="https://askbanu.goatcounter.com" target="_blank" rel="noopener">
+      📊 Open full visitor analytics on GoatCounter →
+    </a>
+    <div id="table-wrap"><p class="empty">Loading posts…</p></div>
+  </div>
+</div>
+
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+  function showDashboard() {
+    document.getElementById('locked').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadStats();
+  }
+
+  window.netlifyIdentity.on('init', user => {
+    if (user) showDashboard();
+  });
+  window.netlifyIdentity.on('login', () => {
+    showDashboard();
+    window.netlifyIdentity.close();
+  });
+
+  async function loadStats() {
+    const wrap = document.getElementById('table-wrap');
+    try {
+      const res = await fetch('/content/posts.json');
+      const data = await res.json();
+      const posts = (data.posts || []).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+      if (posts.length === 0) {
+        wrap.innerHTML = '<p class="empty">No posts yet.</p>';
+        return;
+      }
+
+      const rows = await Promise.all(posts.map(async p => {
+        let count = '—';
+        try {
+          const r = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(p.slug)}`);
+          const d = await r.json();
+          if (typeof d.value === 'number') count = d.value;
+        } catch (e) {}
+        return { ...p, likes: count };
+      }));
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Post</th><th>Date</th><th>Likes</th></tr>
+          </thead>
+          <tbody>
+            ${rows.map(p => `
+              <tr>
+                <td>
+                  <a href="/blog/post.html?slug=${encodeURIComponent(p.slug)}" style="color:inherit;">${p.title}</a>
+                  ${p.featured ? '<br><span class="featured-tag">★ Featured</span>' : ''}
+                </td>
+                <td>${new Date(p.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+                <td class="likes">${p.likes}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (e) {
+      wrap.innerHTML = '<p class="empty">Couldn\'t load stats right now.</p>';
+    }
+  }
+</script>
+</body>
+</html>
