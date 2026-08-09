@@ -101,11 +101,13 @@
       }
 
       const rows = await Promise.all(posts.map(async p => {
-        let count = '—';
+        let count = 0;
         try {
-          const r = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(p.slug)}`);
-          const d = await r.json();
-          if (typeof d.value === 'number') count = d.value;
+          const r = await fetch(`https://countapi.mileshilliard.com/api/v1/get/askbanu-likes-${encodeURIComponent(p.slug)}`);
+          if (r.ok) {
+            const d = await r.json();
+            count = parseInt(d.value, 10) || 0;
+          }
         } catch (e) {}
         return { ...p, likes: count };
       }));
