@@ -45,6 +45,16 @@
   .like-btn .heart { font-size: 18px; }
   .like-btn:disabled { cursor: default; opacity: 0.9; }
 </style>
+<script>
+  // Track each blog post as its own page in GoatCounter, keyed by slug,
+  // since they all otherwise share the same /blog/post.html path.
+  window.goatcounter = {
+    path: function() {
+      var slug = new URLSearchParams(window.location.search).get('slug');
+      return slug ? '/blog/' + slug : '/blog/post';
+    }
+  };
+</script>
 <script data-goatcounter="https://askbanu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
