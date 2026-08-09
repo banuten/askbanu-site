@@ -102,16 +102,17 @@
     const label = document.getElementById('like-label');
     const heart = btn.querySelector('.heart');
     const alreadyLiked = localStorage.getItem(likeKey(slug)) === 'true';
+    let count = 0;
     try {
-      const res = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(slug)}`);
-      const data = await res.json();
-      const count = data && typeof data.value === 'number' ? data.value : 0;
-      label.textContent = alreadyLiked
-        ? `Liked${count ? ' · ' + count : ''}`
-        : (count ? `Like this post · ${count}` : 'Like this post');
-    } catch (e) {
-      label.textContent = alreadyLiked ? 'Liked' : 'Like this post';
-    }
+      const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/askbanu-likes-${encodeURIComponent(slug)}`);
+      if (res.ok) {
+        const data = await res.json();
+        count = parseInt(data.value, 10) || 0;
+      }
+    } catch (e) {}
+    label.textContent = alreadyLiked
+      ? `Liked${count ? ' · ' + count : ''}`
+      : (count ? `Like this post · ${count}` : 'Like this post');
     if (alreadyLiked) {
       btn.classList.add('liked');
       btn.disabled = true;
@@ -126,10 +127,10 @@
     if (localStorage.getItem(likeKey(slug)) === 'true') return;
     btn.disabled = true;
     try {
-      const res = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(slug)}/up`);
+      const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/askbanu-likes-${encodeURIComponent(slug)}`);
       const data = await res.json();
-      const count = data && typeof data.value === 'number' ? data.value : '';
-      label.textContent = `Liked${count !== '' ? ' · ' + count : ''}`;
+      const count = parseInt(data.value, 10);
+      label.textContent = `Liked${!isNaN(count) ? ' · ' + count : ''}`;
     } catch (e) {
       label.textContent = 'Liked';
     }
