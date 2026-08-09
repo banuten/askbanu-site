@@ -32,7 +32,20 @@
   #content pre code { background: none; padding: 0; color: inherit; }
   #content blockquote { border-left: 3px solid var(--rust); padding-left: 16px; color: var(--ink-soft); margin-bottom: 20px; }
   .empty { color: var(--ink-soft); }
+  .like-row { margin-top: 48px; padding-top: 28px; border-top: 1px solid var(--line); }
+  .like-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--cream-warm); border: 1px solid var(--line);
+    border-radius: 999px; padding: 12px 22px; font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px; font-weight: 500; color: var(--ink); cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .like-btn:hover { transform: translateY(-1px); background: var(--yellow); }
+  .like-btn.liked { background: var(--yellow); border-color: var(--rust); }
+  .like-btn .heart { font-size: 18px; }
+  .like-btn:disabled { cursor: default; opacity: 0.9; }
 </style>
+<script data-goatcounter="https://askbanu.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <div class="wrap">
@@ -60,11 +73,60 @@
         <div class="post-date">${new Date(post.date).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
         <h1>${post.title}</h1>
         <div id="content">${marked.parse(post.body || '')}</div>
+        <div class="like-row">
+          <button id="like-btn" class="like-btn" onclick="handleLike('${post.slug}')">
+            <span class="heart">🤍</span> <span id="like-label">Like this post</span>
+          </button>
+        </div>
       `;
+      initLikeButton(post.slug);
     })
     .catch(() => {
       document.getElementById('post').innerHTML = '<p class="empty">Couldn\'t load this post right now.</p>';
     });
+
+  function likeKey(slug) { return 'askbanu-liked-' + slug; }
+
+  async function initLikeButton(slug) {
+    const btn = document.getElementById('like-btn');
+    const label = document.getElementById('like-label');
+    const heart = btn.querySelector('.heart');
+    const alreadyLiked = localStorage.getItem(likeKey(slug)) === 'true';
+    try {
+      const res = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(slug)}`);
+      const data = await res.json();
+      const count = data && typeof data.value === 'number' ? data.value : 0;
+      label.textContent = alreadyLiked
+        ? `Liked${count ? ' · ' + count : ''}`
+        : (count ? `Like this post · ${count}` : 'Like this post');
+    } catch (e) {
+      label.textContent = alreadyLiked ? 'Liked' : 'Like this post';
+    }
+    if (alreadyLiked) {
+      btn.classList.add('liked');
+      btn.disabled = true;
+      heart.textContent = '❤️';
+    }
+  }
+
+  async function handleLike(slug) {
+    const btn = document.getElementById('like-btn');
+    const label = document.getElementById('like-label');
+    const heart = btn.querySelector('.heart');
+    if (localStorage.getItem(likeKey(slug)) === 'true') return;
+    btn.disabled = true;
+    try {
+      const res = await fetch(`https://api.counterapi.dev/v1/askbanu-likes/${encodeURIComponent(slug)}/up`);
+      const data = await res.json();
+      const count = data && typeof data.value === 'number' ? data.value : '';
+      label.textContent = `Liked${count !== '' ? ' · ' + count : ''}`;
+    } catch (e) {
+      label.textContent = 'Liked';
+    }
+    localStorage.setItem(likeKey(slug), 'true');
+    btn.classList.add('liked');
+    heart.textContent = '❤️';
+  }
 </script>
 </body>
 </html>
