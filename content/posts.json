@@ -66,7 +66,7 @@
     },
     {
       "featured": false,
-      "title": "The AI Agent Cost Paradox: Why Volume Punishes Bad Architecture",
+      "title": "Not All Agents Are Born Equal: The High Price of Low Complexity AI",
       "slug": "the-ai-agent-cost-paradox",
       "date": "2026-08-24",
       "excerpt": "AI agents don't break budgets because tasks are simple, they break budgets because high volume ruthlessly amplifies any mismatch between task complexity and model cost.",
