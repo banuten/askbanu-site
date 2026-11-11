@@ -104,7 +104,7 @@
       const rows = await Promise.all(posts.map(async p => {
         let count = 0;
         try {
-          const r = await fetch(`https://countapi.mileshilliard.com/api/v1/get/askbanu-likes-${encodeURIComponent(p.slug)}`);
+          const r = await fetch(`https://countapi.mileshilliard.com/api/v1/get/askbanu-likes-${encodeURIComponent((Array.isArray(p.old_slugs) && p.old_slugs.length) ? p.old_slugs[0] : p.slug)}`);
           if (r.ok) {
             const d = await r.json();
             count = parseInt(d.value, 10) || 0;
