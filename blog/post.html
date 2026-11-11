@@ -66,12 +66,22 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
   const params = new URLSearchParams(window.location.search);
-  const slug = params.get('slug');
+  let slug = params.get('slug');
 
   fetch('/content/posts.json')
     .then(r => r.json())
     .then(data => {
-      const post = (data.posts || []).find(p => p.slug === slug);
+      const posts = data.posts || [];
+      let post = posts.find(p => p.slug === slug);
+      if (!post) {
+        // Old links keep working: a renamed post lists its earlier slugs in old_slugs.
+        post = posts.find(p => Array.isArray(p.old_slugs) && p.old_slugs.includes(slug));
+        if (post) {
+          slug = post.slug;
+          params.set('slug', post.slug);
+          history.replaceState(null, '', window.location.pathname + '?' + params.toString() + window.location.hash);
+        }
+      }
       const el = document.getElementById('post');
       if (!post) {
         el.innerHTML = '<p class="empty">Post not found.</p>';
@@ -84,16 +94,21 @@
         <h1>${post.title}</h1>
         <div id="content">${marked.parse(post.body || '')}</div>
         <div class="like-row">
-          <button id="like-btn" class="like-btn" onclick="handleLike('${post.slug}')">
+          <button id="like-btn" class="like-btn" onclick="handleLike('${likeSlug(post)}')">
             <span class="heart">🤍</span> <span id="like-label">Like this post</span>
           </button>
         </div>
       `;
-      initLikeButton(post.slug);
+      initLikeButton(likeSlug(post));
     })
     .catch(() => {
       document.getElementById('post').innerHTML = '<p class="empty">Couldn\'t load this post right now.</p>';
     });
+
+  // Likes stay keyed to a post's original slug, so renaming a post keeps its count.
+  function likeSlug(post) {
+    return (Array.isArray(post.old_slugs) && post.old_slugs.length) ? post.old_slugs[0] : post.slug;
+  }
 
   function likeKey(slug) { return 'askbanu-liked-' + slug; }
 
